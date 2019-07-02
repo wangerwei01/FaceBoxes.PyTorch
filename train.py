@@ -1,5 +1,6 @@
 from __future__ import print_function
 import os
+import pdb
 import torch
 import torch.optim as optim
 import torch.backends.cudnn as cudnn
@@ -14,7 +15,7 @@ import math
 from models.faceboxes import FaceBoxes
 
 parser = argparse.ArgumentParser(description='FaceBoxes Training')
-parser.add_argument('--training_dataset', default='./data/WIDER_FACE', help='Training dataset directory')
+parser.add_argument('--training_dataset', default='/workspace/mnt/cache/wangerwei/FaceDataset', help='Training dataset directory')
 parser.add_argument('-b', '--batch_size', default=32, type=int, help='Batch size for training')
 parser.add_argument('--num_workers', default=8, type=int, help='Number of workers used in dataloading')
 parser.add_argument('--ngpu', default=2, type=int, help='gpus')
@@ -65,10 +66,13 @@ if args.resume_net is not None:
         new_state_dict[name] = v
     net.load_state_dict(new_state_dict)
 
+#print(list(range(num_gpu)))
+#pdb.set_trace()
+    
 if num_gpu > 1 and gpu_train:
-    net = torch.nn.DataParallel(net, device_ids=list(range(num_gpu)))
+    net = torch.nn.DataParallel(net, device_ids=[3])
 
-device = torch.device('cuda:0' if gpu_train else 'cpu')
+device = torch.device('cuda:3' if gpu_train else 'cpu')
 cudnn.benchmark = True
 net = net.to(device)
 
@@ -120,6 +124,7 @@ def train():
         # forward
         out = net(images)
 
+        
         # backprop
         optimizer.zero_grad()
         loss_l, loss_c = criterion(out, priors, targets)

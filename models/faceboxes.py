@@ -1,4 +1,5 @@
 import torch
+import pdb
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -114,22 +115,22 @@ class FaceBoxes(nn.Module):
     detection_sources = list()
     loc = list()
     conf = list()
-
-    x = self.conv1(x)
-    x = F.max_pool2d(x, kernel_size=3, stride=2, padding=1)
-    x = self.conv2(x)
-    x = F.max_pool2d(x, kernel_size=3, stride=2, padding=1)
-    x = self.inception1(x)
-    x = self.inception2(x)
-    x = self.inception3(x)
+    # x.shape=[1, 3, 931, 1024]
+    x = self.conv1(x)#[1, 48, 233, 256]-------->[1, 48, 128, 128]
+    x = F.max_pool2d(x, kernel_size=3, stride=2, padding=1)#[1, 48, 117, 128])--------->[1, 48, 64, 64]
+    x = self.conv2(x)#[1, 128, 59, 64])------->[1, 128, 32, 32]
+    x = F.max_pool2d(x, kernel_size=3, stride=2, padding=1)#[1, 128, 30, 32]----------->[1, 128, 16, 16]
+    x = self.inception1(x)#[1, 128, 30, 32]------------>[1, 128, 16, 16]
+    x = self.inception2(x)#[1, 128, 30, 32]----------->[1, 128, 16, 16]
+    x = self.inception3(x)#[1, 128, 30, 32]----->[1, 128, 16, 16]
     detection_sources.append(x)
 
-    x = self.conv3_1(x)
-    x = self.conv3_2(x)
+    x = self.conv3_1(x)#[1, 128, 30, 32]------>[1, 128, 16, 16]
+    x = self.conv3_2(x)#[1, 256, 15, 16]----->[1, 256, 8, 8]
     detection_sources.append(x)
 
-    x = self.conv4_1(x)
-    x = self.conv4_2(x)
+    x = self.conv4_1(x)#[1, 256, 15, 16]---->[1, 256, 8, 8]
+    x = self.conv4_2(x)#[1, 256, 8, 8]------>[1, 256, 4, 4]
     detection_sources.append(x)
 
     for (x, l, c) in zip(detection_sources, self.loc, self.conf):

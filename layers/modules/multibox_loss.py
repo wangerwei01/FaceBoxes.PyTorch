@@ -68,6 +68,7 @@ class MultiBoxLoss(nn.Module):
             defaults = priors.data
             match(self.threshold, truths, defaults, self.variance, labels, loc_t, conf_t, idx)
         if GPU:
+            torch.cuda.set_device(3)
             loc_t = loc_t.cuda()
             conf_t = conf_t.cuda()
 

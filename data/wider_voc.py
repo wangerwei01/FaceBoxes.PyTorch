@@ -77,16 +77,21 @@ class VOCDetection(data.Dataset):
         self.root = root
         self.preproc = preproc
         self.target_transform = target_transform
-        self._annopath = os.path.join(self.root, 'annotations', '%s')
-        self._imgpath = os.path.join(self.root, 'images', '%s')
+        self._annopath = os.path.join(self.root, 'Annotations', '%s')
+        self._imgpath = os.path.join(self.root, 'JPEGImages', '%s')
         self.ids = list()
-        with open(os.path.join(self.root, 'img_list.txt'), 'r') as f:
-          self.ids = [tuple(line.split()) for line in f]
+        for line in open(os.path.join(self.root,'train.txt')):
+                self.ids.append(line.strip())
+#         for line in open(os.path.join(self.root,'val.txt')):
+#                 self.ids.append(line.strip())
+        
+#         with open(os.path.join(self.root, 'img_list.txt'), 'r') as f:
+#           self.ids = [tuple(line.split()) for line in f]
 
     def __getitem__(self, index):
         img_id = self.ids[index]
-        target = ET.parse(self._annopath % img_id[1]).getroot()
-        img = cv2.imread(self._imgpath % img_id[0], cv2.IMREAD_COLOR)
+        target = ET.parse(self._annopath % (img_id+'.xml')).getroot()
+        img = cv2.imread(self._imgpath % (img_id+'.jpg'), cv2.IMREAD_COLOR)
         height, width, _ = img.shape
 
         if self.target_transform is not None:
