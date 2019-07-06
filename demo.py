@@ -115,7 +115,7 @@ if __name__ == '__main__':
     if not os.path.exists(args.save_folder):
         os.makedirs(args.save_folder)
     
-    image_file = "/workspace/mnt/cache/wangerwei/FaceDataset/FDDB_Data/FaceDetectionTrainValData/widerface"
+    image_file = "FaceDataset/FDDB_Data/FaceDetectionTrainValData/widerface"
     fim = open(os.path.join(image_file,'ImageSets/Main/test.txt'),'r')
     lines = fim.readlines()
     
